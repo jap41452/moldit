@@ -59,8 +59,8 @@
       </div>
 
       <div class="field">
-        <label for="units">Units<\/label>
-        <select id="units">
+        <label id="unitsLabel" for="units">Units</label>
+        <select id="units" aria-labelledby="unitsLabel">
           <option value="us" selected>lbs & inches & °F</option>
           <option value="si">N & mm & °C</option>
         </select>
@@ -68,16 +68,16 @@
 
       <div class="group"></div>
 
-      <div class="field"><label for="G">Rubber Shear Modulus, G<\/label><input id="G" type="number" step="0.01" value="120"></div>
-      <div class="field"><label for="alpha">Thermal CTE (per °F or per °C)<\/label><input id="alpha" type="number" step="1e-6" value="0.000110"></div>
+      <div class="field"><label for="G">Rubber Shear Modulus, G</label><input id="G" type="number" step="0.01" value="120"></div>
+      <div class="field"><label for="alpha">Thermal CTE (per °F or per °C)</label><input id="alpha" type="number" step="1e-6" value="0.000110"></div>
 
       <div class="group"></div>
 
-      <div class="field g-cyl"><label for="OD">Mold Cavity OD<\/label><input id="OD" type="number" step="0.001" value="4"></div>
-      <div class="field g-cyl"><label for="ID">Mold Cavity ID<\/label><input id="ID" type="number" step="0.001" value="0.5"></div>
-      <div class="field"><label for="H">Mold Cavity Height<\/label><input id="H" type="number" step="0.001" value="0.5"></div>
+      <div class="field g-cyl"><label for="OD">Mold Cavity OD</label><input id="OD" type="number" step="0.001" value="4"></div>
+      <div class="field g-cyl"><label for="ID">Mold Cavity ID</label><input id="ID" type="number" step="0.001" value="0.5"></div>
+      <div class="field"><label for="H">Mold Cavity Height</label><input id="H" type="number" step="0.001" value="0.5"></div>
 
-      <div class="field"><label for="geomSel">Geometry<\/label>
+      <div class="field"><label id="geomSelLabel" for="geomSel">Geometry</label>
         <select id="geomSel" aria-labelledby="geomSelLabel">
           <option value="cyl" selected>Cylinder</option>
           <option value="cone">Straight cone</option>
@@ -86,20 +86,20 @@
       </div>
 
       <div id="coneFields" class="subsec hide">
-        <div class="field"><label for="OD0">OD @ z=0<\/label><input id="OD0" type="number" step="0.001" value="4"></div>
-        <div class="field"><label for="OD1">OD @ z=H<\/label><input id="OD1" type="number" step="0.001" value="4"></div>
-        <div class="field"><label for="ID0">ID @ z=0<\/label><input id="ID0" type="number" step="0.001" value="0.5"></div>
-        <div class="field"><label for="ID1">ID @ z=H<\/label><input id="ID1" type="number" step="0.001" value="0.5"></div>
+        <div class="field"><label for="OD0">OD @ z=0</label><input id="OD0" type="number" step="0.001" value="4"></div>
+        <div class="field"><label for="OD1">OD @ z=H</label><input id="OD1" type="number" step="0.001" value="4"></div>
+        <div class="field"><label for="ID0">ID @ z=0</label><input id="ID0" type="number" step="0.001" value="0.5"></div>
+        <div class="field"><label for="ID1">ID @ z=H</label><input id="ID1" type="number" step="0.001" value="0.5"></div>
       </div>
 
       <div id="curvFields" class="subsec hide">
-        <div class="field"><label for="kOutVal">Outer curvature k_out (− concave … + convex)<\/label>
+        <div class="field"><label for="kOutVal">Outer curvature k_out (− concave … + convex)</label>
           <div class="rangeRow">
             <input id="kOutSlider" type="range" min="-3" max="3" step="0.05" value="0">
             <input id="kOutVal" type="number" step="0.05" value="0" min="-3" max="3">
           </div>
         </div>
-        <div class="field"><label for="kInVal">Inner curvature k_in (− concave … + convex)<\/label>
+        <div class="field"><label for="kInVal">Inner curvature k_in (− concave … + convex)</label>
           <div class="rangeRow">
             <input id="kInSlider" type="range" min="-3" max="3" step="0.05" value="0">
             <input id="kInVal" type="number" step="0.05" value="0" min="-3" max="3">
@@ -107,20 +107,20 @@
         </div>
       </div>
 
-      <div class="field"><label for="ends">End condition<\/label>
-        <select id="ends" aria-labelledby="ends">
+      <div class="field"><label id="endsLabel" for="ends">End condition</label>
+        <select id="ends" aria-labelledby="endsLabel">
           <option value="bonded" selected>Bonded ends (z=0 & z=H fixed)</option>
           <option value="free">Free ends</option>
         </select>
       </div>
 
       <div class="group"></div>
-      <div class="field"><label for="Tm">Molding Temp<\/label><input id="Tm" type="number" step="0.1" value="305"></div>
-      <div class="field"><label for="Tr">Room Temp<\/label><input id="Tr" type="number" step="0.1" value="70"></div>
+      <div class="field"><label for="Tm">Molding Temp</label><input id="Tm" type="number" step="0.1" value="305"></div>
+      <div class="field"><label for="Tr">Room Temp</label><input id="Tr" type="number" step="0.1" value="70"></div>
 
       <div class="group"></div>
       <div class="field">
-        <label for="defScaleSlider">Deflection Scale (visual only)<\/label>
+        <label for="defScaleSlider">Deflection Scale (visual only)</label>
         <div class="rangeRow">
           <input id="defScaleSlider" type="range" min="0" max="5" step="0.1" value="1">
           <input id="defScale" type="number" step="0.1" value="1">
@@ -635,4 +635,5 @@
 </script>
 </body>
 </html>
+
 
