@@ -139,10 +139,7 @@
         <canvas id="cvPrev" width="860" height="240" aria-label="Original geometry preview"></canvas>
       </div>
 
-      <div class="row2">
-        <div><strong>Solved overlay:</strong> BEFORE (blue) + AFTER (red) in r–z</div>
-        <div class="subtle" id="status">Ready • Strain range: — • Defl scale: <span id="defScaleLbl">1×</span></div>
-      </div>
+      <div class="hdr">Solved overlay: BEFORE (blue) + AFTER (red) in r–z</div>
       <div class="canvasWrap">
         <div id="solveBadge" class="solveBadge" aria-live="polite">Ready</div>
         <canvas id="cv" width="860" height="380" aria-label="Solved after-shape with shear"></canvas>
@@ -189,31 +186,10 @@
   const badge = el('solveBadge');
 
   // Guarded setters --------------------------------------------------------
-  function ensureStatusElements(){
-    if(!statusEl){
-      const row = document.querySelector('.row2');
-      if(row){
-        statusEl = document.createElement('div');
-        statusEl.className = 'subtle';
-        statusEl.id = 'status';
-        statusEl.textContent = 'Ready';
-        row.appendChild(statusEl);
-      }
-    }
-    if(!defScaleLbl){
-      if(statusEl){
-        const span = document.createElement('span');
-        span.id = 'defScaleLbl';
-        span.textContent = '1×';
-        statusEl.appendChild(document.createTextNode(' • Defl scale: '));
-        statusEl.appendChild(span);
-        defScaleLbl = span;
-      }
-    }
-  }
-  function setStatus(txt){ ensureStatusElements(); if(statusEl){ statusEl.textContent = txt; } }
-  function setStatusHTML(html){ ensureStatusElements(); if(statusEl){ statusEl.innerHTML = html; defScaleLbl = el('defScaleLbl') || defScaleLbl; } }
-  function safeSetDefScaleLabel(text){ ensureStatusElements(); if(defScaleLbl){ defScaleLbl.textContent = text; } }
+  function ensureStatusElements(){ /* status removed */ }
+  function setStatus(txt){ /* status removed */ }
+  function setStatusHTML(html){ /* status removed */ }
+  function safeSetDefScaleLabel(text){ /* status removed */ }
 
   let ctxPrev = null, ctx = null;
   try{ ctxPrev = cvPrev.getContext('2d'); ctx = cv.getContext('2d'); }catch(err){ console.error('Canvas context error:', err); }
@@ -673,6 +649,7 @@
 </script>
 </body>
 </html>
+
 
 
 
