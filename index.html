@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="icon" href="data:,">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Bonded Rubber — Mold → Cool (v1.2.3 • FEM + Two‑k Curved Cones)</title>
@@ -57,7 +59,7 @@
       </div>
 
       <div class="field">
-        <label>Units</label>
+        <label for="units">Units<\/label>
         <select id="units">
           <option value="us" selected>lbs & inches & °F</option>
           <option value="si">N & mm & °C</option>
@@ -66,17 +68,17 @@
 
       <div class="group"></div>
 
-      <div class="field"><label>Rubber Shear Modulus, G</label><input id="G" type="number" step="0.01" value="120"></div>
-      <div class="field"><label>Thermal CTE (per °F or per °C)</label><input id="alpha" type="number" step="1e-6" value="0.000110"></div>
+      <div class="field"><label for="G">Rubber Shear Modulus, G<\/label><input id="G" type="number" step="0.01" value="120"></div>
+      <div class="field"><label for="alpha">Thermal CTE (per °F or per °C)<\/label><input id="alpha" type="number" step="1e-6" value="0.000110"></div>
 
       <div class="group"></div>
 
-      <div class="field g-cyl"><label>Mold Cavity OD</label><input id="OD" type="number" step="0.001" value="4"></div>
-      <div class="field g-cyl"><label>Mold Cavity ID</label><input id="ID" type="number" step="0.001" value="0.5"></div>
-      <div class="field"><label>Mold Cavity Height</label><input id="H" type="number" step="0.001" value="0.5"></div>
+      <div class="field g-cyl"><label for="OD">Mold Cavity OD<\/label><input id="OD" type="number" step="0.001" value="4"></div>
+      <div class="field g-cyl"><label for="ID">Mold Cavity ID<\/label><input id="ID" type="number" step="0.001" value="0.5"></div>
+      <div class="field"><label for="H">Mold Cavity Height<\/label><input id="H" type="number" step="0.001" value="0.5"></div>
 
-      <div class="field"><label>Geometry</label>
-        <select id="geomSel">
+      <div class="field"><label for="geomSel">Geometry<\/label>
+        <select id="geomSel" aria-labelledby="geomSelLabel">
           <option value="cyl" selected>Cylinder</option>
           <option value="cone">Straight cone</option>
           <option value="curved">Curved cone (two‑k: k_out & k_in)</option>
@@ -84,20 +86,20 @@
       </div>
 
       <div id="coneFields" class="subsec hide">
-        <div class="field"><label>OD @ z=0</label><input id="OD0" type="number" step="0.001" value="4"></div>
-        <div class="field"><label>OD @ z=H</label><input id="OD1" type="number" step="0.001" value="4"></div>
-        <div class="field"><label>ID @ z=0</label><input id="ID0" type="number" step="0.001" value="0.5"></div>
-        <div class="field"><label>ID @ z=H</label><input id="ID1" type="number" step="0.001" value="0.5"></div>
+        <div class="field"><label for="OD0">OD @ z=0<\/label><input id="OD0" type="number" step="0.001" value="4"></div>
+        <div class="field"><label for="OD1">OD @ z=H<\/label><input id="OD1" type="number" step="0.001" value="4"></div>
+        <div class="field"><label for="ID0">ID @ z=0<\/label><input id="ID0" type="number" step="0.001" value="0.5"></div>
+        <div class="field"><label for="ID1">ID @ z=H<\/label><input id="ID1" type="number" step="0.001" value="0.5"></div>
       </div>
 
       <div id="curvFields" class="subsec hide">
-        <div class="field"><label>Outer curvature k_out (− concave … + convex)</label>
+        <div class="field"><label for="kOutVal">Outer curvature k_out (− concave … + convex)<\/label>
           <div class="rangeRow">
             <input id="kOutSlider" type="range" min="-3" max="3" step="0.05" value="0">
             <input id="kOutVal" type="number" step="0.05" value="0" min="-3" max="3">
           </div>
         </div>
-        <div class="field"><label>Inner curvature k_in (− concave … + convex)</label>
+        <div class="field"><label for="kInVal">Inner curvature k_in (− concave … + convex)<\/label>
           <div class="rangeRow">
             <input id="kInSlider" type="range" min="-3" max="3" step="0.05" value="0">
             <input id="kInVal" type="number" step="0.05" value="0" min="-3" max="3">
@@ -105,20 +107,20 @@
         </div>
       </div>
 
-      <div class="field"><label>End condition</label>
-        <select id="ends">
+      <div class="field"><label for="ends">End condition<\/label>
+        <select id="ends" aria-labelledby="ends">
           <option value="bonded" selected>Bonded ends (z=0 & z=H fixed)</option>
           <option value="free">Free ends</option>
         </select>
       </div>
 
       <div class="group"></div>
-      <div class="field"><label>Molding Temp</label><input id="Tm" type="number" step="0.1" value="305"></div>
-      <div class="field"><label>Room Temp</label><input id="Tr" type="number" step="0.1" value="70"></div>
+      <div class="field"><label for="Tm">Molding Temp<\/label><input id="Tm" type="number" step="0.1" value="305"></div>
+      <div class="field"><label for="Tr">Room Temp<\/label><input id="Tr" type="number" step="0.1" value="70"></div>
 
       <div class="group"></div>
       <div class="field">
-        <label>Deflection Scale (visual only)</label>
+        <label for="defScaleSlider">Deflection Scale (visual only)<\/label>
         <div class="rangeRow">
           <input id="defScaleSlider" type="range" min="0" max="5" step="0.1" value="1">
           <input id="defScale" type="number" step="0.1" value="1">
@@ -484,120 +486,6 @@
     ctxX.fillText('shear γ_rz', x + w + 8, y - 6);
   }
 
-  // --- Tests ---------------------------------------------------------------
-  function runTests(){
-    const out = el('testsOut'); const sum = el('testSummary'); const logs = []; let pass=0, fail=0; const tol=1e-6;
-    function approxEq(a,b,t=1e-6){ return Math.abs(a-b) <= t*Math.max(1,Math.abs(b)); }
-    function log(ok,msg){ if(ok) pass+=1; else fail+=1; logs.push((ok?"PASS ":"FAIL ")+msg); }
-
-    // Utility tests
-    try{ const r=valueRange([3,5,1,9]); log(r.min===1 && r.max===9, 'valueRange basic'); }catch(e){ log(false,'valueRange basic'); }
-    try{ const n=normalize([1,3,5]); log(approxEq(n[0],0) && approxEq(n[1],0.5) && approxEq(n[2],1),'normalize maps to [0,0.5,1]'); }catch(e){ log(false,'normalize mapping'); }
-    try{ const n2=normalize([2,2,2]); const allHalf=n2.every(v=>approxEq(v,0.5)); log(allHalf,'normalize flat array -> all 0.5'); }catch(e){ log(false,'normalize flat'); }
-    try{ const c=ramp(0.25); log(/^rgb\(/.test(c),'ramp returns rgb() string'); }catch(e){ log(false,'ramp string'); }
-
-    // Analytic shrink tests
-    const p1 = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:0.5,ends:'bonded',Tm:305,Tr:70};
-    const r1 = analyticShrink(p1); const dT = 235; const s_r = 0.00011*dT; // 0.02585
-    log(approxEq(r1.s_r, s_r, tol), `s_r=${r1.s_r} vs ${s_r}`);
-    log(approxEq(r1.s_z, 0, tol), `s_z bonded should be 0 (got ${r1.s_z})`);
-    log(approxEq(r1.after.OD, 4*(1-s_r), 1e-9), `after.OD≈${(4*(1-s_r)).toFixed(6)} (got ${r1.after.OD})`);
-    log(approxEq(r1.after.H, 0.5*(1-0), tol), `after.H≈0.5 (got ${r1.after.H})`);
-
-    const p2 = {...p1, ends:'free'}; const r2 = analyticShrink(p2);
-    log(approxEq(r2.s_z, s_r, tol), `free: s_z=${r2.s_z} vs ${s_r}`);
-    log(approxEq(r2.after.H, 0.5*(1-s_r), tol), `free: after.H≈${(0.5*(1-s_r)).toFixed(6)} (got ${r2.after.H})`);
-
-    const aF = 0.00011; const aC = +(aF*9/5).toFixed(9); const back = +(aC*5/9).toFixed(9);
-    log(approxEq(back, aF, 1e-12), `alpha round-trip F→C→F (${back} vs ${aF})`);
-
-    let threw=false; try{ readInputsFrom({OD:2,ID:2}); }catch(_e){ threw=true; }
-    log(threw===true, 'validation: ID ≥ OD throws');
-
-    let drawErr=false; try{ drawResults(r1); }catch(e){ drawErr=true; }
-    log(drawErr===false, 'drawResults() executes without errors');
-
-    // FEM sanity & regression tests
-    let fe, noError=true; try{ fe = solveFENeoHookean(p1, {nr:8,nz:12,maxIter:120}); }catch(e){ noError=false; }
-    log(noError===true, 'FEM solve runs without ReferenceError');
-    const finite = fe && fe.boundary && fe.boundary.rOuter.every(Number.isFinite);
-    log(finite===true, 'FEM returns finite boundary radii');
-    const hole = fe.boundary.rInner.every(r => r>0);
-    log(hole===true, 'FEM keeps inner hole > 0');
-
-    // Bonded ends should create OD curvature
-    try {
-      const feCurv = solveFENeoHookean({u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:0.5,ends:'bonded',Tm:305,Tr:70},{nr:10,nz:14,maxIter:150});
-      const rO = feCurv.boundary.rOuter; const mid = Math.floor(rO.length/2);
-      const hasCurv = Math.abs(rO[0] - rO[mid]) > 1e-6 || Math.abs(rO[rO.length-1] - rO[mid]) > 1e-6;
-      log(hasCurv===true, 'bonded: outer radius varies along z (curvature)');
-    } catch(e) { log(false, 'bonded curvature check'); }
-
-    // Free ends axial length ~ thermal stretch
-    try {
-      const base = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:0.5,ends:'free',Tm:305,Tr:70};
-      const feFree = solveFENeoHookean(base,{nr:8,nz:10,maxIter:160});
-      const z0 = feFree.boundary.zCur[0];
-      const zH = feFree.boundary.zCur[feFree.boundary.zCur.length-1];
-      const lam_th = 1 - base.alpha*(base.Tm-base.Tr);
-      log(approxEq((zH-z0)/base.H, lam_th, 5e-2), 'free: axial length ≈ thermal stretch (within 5%)');
-    } catch(e) { log(false, 'free-end axial shrink check'); }
-
-    // UI test: number↔slider sync
-    try {
-      const old = defScaleEl.value; defScaleEl.value = '2.3'; defScaleEl.dispatchEvent(new Event('input')); log(defScaleSlider.value === '2.3', 'deflection scale num→slider sync');
-      defScaleSlider.value = '1.7'; defScaleSlider.dispatchEvent(new Event('input')); log(defScaleEl.value === '1.7', 'deflection scale slider→num sync'); defScaleEl.value = old; defScaleEl.dispatchEvent(new Event('input'));
-    } catch(e) { log(false, 'deflection scale sync'); }
-
-    // Additional: bonded case should generate non-trivial shear
-    try {
-      const feB = solveFENeoHookean({u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:0.5,ends:'bonded',Tm:305,Tr:70},{nr:10,nz:12,maxIter:140});
-      const rng = valueRange(feB.shearValsRZ);
-      log((rng.max - rng.min) > 1e-9, 'bonded: shear range is non-zero');
-    } catch(e) { log(false, 'bonded shear nonzero'); }
-
-    // Geometry: straight cone degenerates to cylinder when end radii equal
-    try {
-      const Ht=0.5; const ro0=2, ro1=2, ri0=0.25, ri1=0.25;
-      const pcone = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:Ht,ends:'bonded',Tm:305,Tr:70,
-        roAt:(z)=>{const t=z/Ht;return (1-t)*ro0 + t*ro1;}, riAt:(z)=>{const t=z/Ht;return (1-t)*ri0 + t*ri1;}};
-      const feC = solveFENeoHookean(pcone,{nr:8,nz:10});
-      const rO = feC.boundary.rOuter; const diff = Math.max(...rO)-Math.min(...rO);
-      log(diff<1e-6, 'cone w/ equal ends behaves like cylinder (outer radius nearly uniform)');
-    } catch(e) { log(false, 'cone→cylinder regression'); }
-
-    // Curved cone: k=0 vs straight
-    try {
-      const Ht=0.5; const ro0=2, ro1=3, ri0=0.25, ri1=0.35; const kappa=0; // k=0 → straight
-      const pStraight = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:Ht,ends:'bonded',Tm:305,Tr:70,
-        roAt:(z)=>{const t=z/Ht;return (1-t)*ro0 + t*ro1;}, riAt:(z)=>{const t=z/Ht;return (1-t)*ri0 + t*ri1;}};
-      const pCurved0 = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:Ht,ends:'bonded',Tm:305,Tr:70,
-        roAt:(z)=>{const t=z/Ht; const bump=(t*t*(1-t)*(1-t))/0.0625; return ((1-t)*ro0 + t*ro1) * (1 + kappa*0.15*bump);},
-        riAt:(z)=>{const t=z/Ht; const bump=(t*t*(1-t)*(1-t))/0.0625; return ((1-t)*ri0 + t*ri1) * (1 + kappa*0.15*bump);}};
-      const feS = solveFENeoHookean(pStraight,{nr:8,nz:10});
-      const feC0 = solveFENeoHookean(pCurved0,{nr:8,nz:10});
-      const mid = Math.floor(feS.boundary.rOuter.length/2);
-      const close = Math.abs(feS.boundary.rOuter[mid]-feC0.boundary.rOuter[mid]) < 5e-4;
-      log(close===true, 'curved k=0 matches straight cone mid-outer radius');
-    } catch(e) { log(false, 'curved k=0 regression'); }
-
-    // Two‑k geometry: different k_out/k_in keep positive wall thickness
-    try {
-      const Ht=0.5; const ro0=2, ro1=2, ri0=0.25, ri1=0.25;
-      const bump=(t)=> (t*t*(1-t)*(1-t))/0.0625; const gamma=0.15;
-      const roAt=(z)=>{const t=z/Ht; return ((1-t)*ro0 + t*ro1)*(1 + 0.6*gamma*bump(t));};
-      const riAt=(z)=>{const t=z/Ht; return ((1-t)*ri0 + t*ri1)*(1 - 0.6*gamma*bump(t));};
-      for(let k=0;k<=40;k++){ const zz=k*Ht/40; if(!(roAt(zz) - riAt(zz) > 1e-9)) throw new Error('non-positive wall'); }
-      log(true,'two‑k: wall remains positive');
-    } catch(e){ log(false,'two‑k wall positivity'); }
-
-    // Draw colorbar smoke test
-    try{ drawColorbar(ctx, 10, 10, 12, 60, [0,1,0.5,0.7]); log(true,'drawColorbar executes'); }catch(e){ log(false,'drawColorbar executes'); }
-
-    sum.textContent = `${pass} passed, ${fail} failed`;
-    out.textContent = logs.join('\n');
-  }
-
   function readInputsFrom(over){ const base = {u:'us',G:120,alpha:0.00011,OD:4,ID:0.5,H:0.5,ends:'bonded',Tm:305,Tr:70}; const p = {...base, ...over}; if(!(p.OD>0) || !(p.H>0) || !(p.Tm>p.Tr)) throw new Error('Check OD, Height, and that molding temp > room temp.'); if(!(p.alpha>=0)) throw new Error('CTE must be ≥ 0.'); if(p.ID<0 || p.ID>=p.OD) throw new Error('ID must be ≥ 0 and < OD.'); return p; }
 
   // FEM SOLVER --------------------------------------------------------------
@@ -691,4 +579,60 @@
     function matvec(out, x){ for(let r=0;r<N;r++){ let s=0; const rowOff=r*N; for(let c=0;c<N;c++) s+=K[rowOff+c]*x[c]; out[r]=s; } }
     const u = new Float64Array(N); const r = new Float64Array(N); const z = new Float64Array(N); const pvec = new Float64Array(N); const Ap = new Float64Array(N); const M = new Float64Array(N);
     for(let i=0;i<N;i++){ M[i] = K[i*N + i] || 1; }
-    matvec(r,u); for(let i=0;i<N;i++){ r[i] = f[i] - r[i]; z[i] = r[i]/M[i]; pvec[i] = z[i]; }
+    matvec(r,u);
+    for(let i=0;i<N;i++){ r[i] = f[i] - r[i]; z[i] = r[i]/M[i]; pvec[i] = z[i]; }
+    let rz_old = 0; for(let i=0;i<N;i++) rz_old += r[i]*z[i];
+    const normF = (()=>{ let s=0; for(let i=0;i<N;i++) s += f[i]*f[i]; return Math.sqrt(s); })();
+    const tol = 1e-10 * Math.max(1, normF); const maxIt = opts.maxIter || 2000;
+    for(let it=0; it<maxIt && rz_old>tol; it++){
+      matvec(Ap, pvec);
+      let pAp=0; for(let i=0;i<N;i++) pAp += pvec[i]*Ap[i];
+      const alpha_pcg = rz_old/(pAp||1e-30);
+      for(let i=0;i<N;i++){ u[i] += alpha_pcg*pvec[i]; r[i] -= alpha_pcg*Ap[i]; z[i] = r[i]/M[i]; }
+      let rz_new=0; for(let i=0;i<N;i++) rz_new += r[i]*z[i];
+      if(Math.sqrt(rz_new) < 1e-9) break;
+      const beta = rz_new/(rz_old||1e-30);
+      for(let i=0;i<N;i++) pvec[i] = z[i] + beta*pvec[i];
+      rz_old = rz_new;
+    }
+
+    const ur = new Float64Array(nR*nZ); const uz = new Float64Array(nR*nZ);
+    for(let k=0;k<nR*nZ;k++){ ur[k]=u[2*k+0]; uz[k]=u[2*k+1]; }
+
+    const zRows=[], rInner=[], rOuter=[], zCur=[];
+    for(let j=0;j<nZ;j++){
+      const kI = idx(0,j), kO = idx(nR-1,j); zRows.push(Znod[kI]);
+      rInner.push(Rnod[kI] + ur[kI]); rOuter.push(Rnod[kO] + ur[kO]);
+      zCur.push( Znod[kI] + uz[kI] );
+    }
+
+    // Cell shear proxy at element centers
+    const cells=[]; const shearVals=[]; const dS = 1/nr;
+    for(let j=0;j<nz;j++){
+      const z0 = j*dZ, z1 = (j+1)*dZ;
+      for(let i=0;i<nr;i++){
+        const nids=[idx(i,j), idx(i+1,j), idx(i+1,j+1), idx(i,j+1)];
+        const xi=0, eta=0; const {N:Ni, dN_dxi, dN_deta}=shape(xi,eta);
+        let R_xi=0,R_eta=0,Z_xi=0,Z_eta=0; for(let m=0;m<4;m++){ const k=nids[m]; R_xi+=dN_dxi[m]*Rnod[k]; R_eta+=dN_deta[m]*Rnod[k]; Z_xi+=dN_dxi[m]*Znod[k]; Z_eta+=dN_deta[m]*Znod[k]; }
+        const detJ = R_xi*Z_eta - R_eta*Z_xi; const invJ00 =  Z_eta/detJ, invJ01 = -R_eta/detJ; const invJ10 = -Z_xi/detJ, invJ11 =  R_xi/detJ;
+        const dNr = new Array(4), dNz = new Array(4); for(let m=0;m<4;m++){ dNr[m]=dN_dxi[m]*invJ00 + dN_deta[m]*invJ10; dNz[m]=dN_dxi[m]*invJ01 + dN_deta[m]*invJ11; }
+        let ur_R=0, ur_Z=0, uz_R=0, uz_Z=0; for(let m=0;m<4;m++){ const k=nids[m]; ur_R+=dNr[m]*u[2*k+0]; ur_Z+=dNz[m]*u[2*k+0]; uz_R+=dNr[m]*u[2*k+1]; uz_Z+=dNz[m]*u[2*k+1]; }
+        const gamma = Math.abs(ur_Z + uz_R);
+        const s0=i*dS, s1=s0+dS; cells.push({r0:s0,r1:s1,z0:z0,z1:z1}); shearVals.push(gamma);
+      }
+    }
+
+    return { before:{OD:p.OD,ID:p.ID,H:p.H}, meshRZ:{ri:0,ro:1,H:H,cells}, shearValsRZ:shearVals, boundary:{z:zRows,rInner,rOuter,zCur}, params:p };
+  }
+
+  function interp1(xs, ys, x){ const n=xs.length; if(n===0) return NaN; if(x<=xs[0]) return ys[0]; if(x>=xs[n-1]) return ys[n-1]; let i=1; while(i<n && x>xs[i]) i++; const x0=xs[i-1], x1=xs[i], y0=ys[i-1], y1=ys[i]; const t=(x-x0)/(x1-x0); return y0 + t*(y1-y0); }
+
+  // Initial paint (preview only). No solve until MOLD IT.
+  updateDefScaleLabel();
+  setSolveState('ready');
+  drawPreview();
+})();
+</script>
+</body>
+</html>
+
