@@ -5,7 +5,7 @@
 <link rel="icon" href="data:,">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bonded Rubber — Mold → Cool (v1.2.3 • FEM + Two‑k Curved Cones)</title>
+<title>Bonded Rubber — Mold → Cool (v1.2.4 • FEM + Two‑k Curved Cones)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -212,11 +212,7 @@
       });
     }catch(err){ /* no-op: best-effort cleanup */ }
   }
-          }
-        });
-      });
-    }catch(err){ /* no-op: best-effort cleanup */ }
-  }
+
   function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
   function valueRange(arr){
     if(!arr || !arr.length) return {min:NaN, max:NaN};
@@ -278,8 +274,6 @@
 
   // Geometry inputs refresh preview only
   ;[ODEl, IDEl, HEl, OD0El, OD1El, ID0El, ID1El].forEach(inp => { if(inp) inp.addEventListener('input', drawPreview); });
-
-  
 
   function setSolveState(state, note){
     if(!badge) return;
@@ -651,6 +645,17 @@
 
   function interp1(xs, ys, x){ const n=xs.length; if(n===0) return NaN; if(x<=xs[0]) return ys[0]; if(x>=xs[n-1]) return ys[n-1]; let i=1; while(i<n && x>xs[i]) i++; const x0=xs[i-1], x1=xs[i], y0=ys[i-1], y1=ys[i]; const t=(x-x0)/(x1-x0); return y0 + t*(y1-y0); }
 
+  // --- Optional sanity tests (only run if ?autotest=1 is present) ---------
+  function runSanityTests(){
+    const out=[];
+    try{ updateDefScaleLabel(); out.push('defScale label OK'); }catch(e){ out.push('defScale label FAIL:'+e.message); }
+    try{ const g=readGeom(); if(g && g.H>0) out.push('readGeom OK'); else out.push('readGeom FAIL'); }catch(e){ out.push('readGeom EXC:'+e.message); }
+    return out;
+  }
+  if(/(^|[?&])autotest=1(&|$)/.test(location.search)){
+    console.log('[sanity]', runSanityTests());
+  }
+
   // Initial paint (preview only). No solve until MOLD IT.
   updateDefScaleLabel();
   setSolveState('ready');
@@ -659,6 +664,7 @@
 </script>
 </body>
 </html>
+
 
 
 
