@@ -200,13 +200,18 @@
   function scrubEscapedLabelArtifacts(){
     try{
       document.querySelectorAll('.field').forEach(f=>{
-        const nodes=[...f.childNodes];
-        nodes.forEach(n=>{
+        [...f.childNodes].forEach(n=>{
           if(n && n.nodeType===Node.TEXT_NODE){
             const t=(n.textContent||'').trim();
-            if(/<\\/label>/i.test(t) || /<\/label>/i.test(t) || /\\/label>/i.test(t)){
+            // Remove visible artifacts like "</label>", "<\/label>", or "\/label>"
+            if(t.includes('</label>') || t.includes('<\/label>') || t.includes('\/label>')){
               n.remove();
             }
+          }
+        });
+      });
+    }catch(err){ /* no-op: best-effort cleanup */ }
+  }
           }
         });
       });
@@ -654,6 +659,7 @@
 </script>
 </body>
 </html>
+
 
 
 
