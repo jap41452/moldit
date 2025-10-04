@@ -196,6 +196,22 @@
   let lastFE = null;
 
   // ---------- Utility helpers --------------------------------------------
+  // Scrub any literal '</label>' or '<\/label>' text nodes that may appear if a host escapes markup (e.g., some GH renderers)
+  function scrubEscapedLabelArtifacts(){
+    try{
+      document.querySelectorAll('.field').forEach(f=>{
+        const nodes=[...f.childNodes];
+        nodes.forEach(n=>{
+          if(n && n.nodeType===Node.TEXT_NODE){
+            const t=(n.textContent||'').trim();
+            if(/<\\/label>/i.test(t) || /<\/label>/i.test(t) || /\\/label>/i.test(t)){
+              n.remove();
+            }
+          }
+        });
+      });
+    }catch(err){ /* no-op: best-effort cleanup */ }
+  }
   function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
   function valueRange(arr){
     if(!arr || !arr.length) return {min:NaN, max:NaN};
@@ -244,7 +260,10 @@
     if(coneBox) coneBox.style.display=(g==='cone'||g==='curved')?'block':'none';
     if(curvBox) curvBox.style.display=(g==='curved')?'block':'none';
   }
-  geomEl.addEventListener('change', ()=>{ updateGeomUI(); drawPreview(); });
+  geomEl.addEventListener('change', ()=>{ updateGeomUI();
+  // In case this file is served by a host that escaped label closers in a previous revision,
+  // clean up any visible artifacts so the UI looks correct.
+  scrubEscapedLabelArtifacts(); drawPreview(); });
   updateGeomUI();
 
   // Sliders: do NOT solve. defScale only redraws results; k updates preview
@@ -635,5 +654,6 @@
 </script>
 </body>
 </html>
+
 
 
