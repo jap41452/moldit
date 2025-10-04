@@ -31,8 +31,8 @@
   .subsec{margin-left:0}
   .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;margin-top:6px}
   .sw{width:14px;height:10px;border-radius:3px;border:1px solid #999}
-  .row2{display:flex;gap:12px;align-items:center;justify-content:space-between}
-  .subtle{color:#666;font-size:12px}
+  .row2{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .subtle{color:#666;font-size:12px;flex:1 1 320px;min-width:260px;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:right}
   .testbar{margin-top:10px;display:flex;gap:8px;align-items:center}
   pre#testsOut{background:#fafafa;border:1px solid #eee;border-radius:8px;padding:10px;max-height:260px;overflow:auto;font-size:12px}
   .rangeRow{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:8px;align-items:center;width:100%;}
@@ -315,10 +315,10 @@
   function drawPreview(){
     if(!ctxPrev) return;
     const g = readGeom();
-    const pad=20; ctxPrev.clearRect(0,0,cvPrev.width,cvPrev.height); ctxPrev.save(); ctxPrev.translate(pad,pad);
+    const pad=28; ctxPrev.clearRect(0,0,cvPrev.width,cvPrev.height); ctxPrev.save(); ctxPrev.translate(pad,pad);
     const viewW=cvPrev.width-2*pad, viewH=cvPrev.height-2*pad; const H=g.H; const Rmax = Math.max(sampleMax(g.roAt,H), g.OD/2);
-    const scale = Math.min((viewW)/(2*Rmax*1.1), (viewH)/(H*1.1));
-    const originX = 60 + (viewW/2), originY = 6;
+    const scale = Math.min((viewW)/(2*Rmax*1.25), (viewH)/(H*1.25));
+    const originX = Math.round(viewW/2), originY = 10;
     const X = r => originX + r*scale, Y = z => originY + z*scale;
     // axes
     ctxPrev.strokeStyle='#bbb'; ctxPrev.lineWidth=1; ctxPrev.beginPath(); ctxPrev.moveTo(originX, originY); ctxPrev.lineTo(originX, originY + H*scale); ctxPrev.stroke();
@@ -654,6 +654,7 @@
 </script>
 </body>
 </html>
+
 
 
 
