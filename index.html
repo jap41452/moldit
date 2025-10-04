@@ -5,7 +5,7 @@
 <link rel="icon" href="data:,">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bonded Rubber — Mold → Cool (v1.2.4 • FEM + Two‑k Curved Cones)</title>
+<title>Bonded Rubber — Mold → Cool (v1.2.5 • FEM + Two‑k Curved Cones)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -31,8 +31,8 @@
   .subsec{margin-left:0}
   .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;margin-top:6px}
   .sw{width:14px;height:10px;border-radius:3px;border:1px solid #999}
-  .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:start}  
-  .subtle{color:#666;font-size:12px;justify-self:end;text-align:right;white-space:normal;overflow-wrap:anywhere;word-break:break-word;hyphens:auto;max-width:100%} 
+  .row2{display:grid;grid-template-columns:1fr;grid-auto-rows:auto;row-gap:4px;align-items:start}
+  .subtle{color:#666;font-size:12px;justify-self:end;text-align:right;white-space:normal;overflow-wrap:anywhere;word-break:break-word;hyphens:auto;max-width:100%}
   .testbar{margin-top:10px;display:flex;gap:8px;align-items:center}
   pre#testsOut{background:#fafafa;border:1px solid #eee;border-radius:8px;padding:10px;max-height:260px;overflow:auto;font-size:12px}
   .rangeRow{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:8px;align-items:center;width:100%;}
@@ -128,7 +128,6 @@
       </div>
 
       <div class="group"></div>
-      
 
       <div class="group"></div>
       
@@ -142,7 +141,7 @@
 
       <div class="row2">
         <div><strong>Solved overlay:</strong> BEFORE (blue) + AFTER (red) in r–z</div>
-        <div class="subtle" id="status" style="max-width:100%;line-height:1.25">Ready • Strain range: — • Defl scale: <span id="defScaleLbl">1×</span></div>
+        <div class="subtle" id="status">Ready • Strain range: — • Defl scale: <span id="defScaleLbl">1×</span></div>
       </div>
       <div class="canvasWrap">
         <div id="solveBadge" class="solveBadge" aria-live="polite">Ready</div>
@@ -183,11 +182,37 @@
   const TrEl = el('Tr');
   const defScaleEl = el('defScale');
   const defScaleSlider = el('defScaleSlider');
-  const defScaleLbl = el('defScaleLbl');
+  let defScaleLbl = el('defScaleLbl');
   const cvPrev = el('cvPrev');
   const cv = el('cv');
-  const status = el('status');
+  let statusEl = el('status');
   const badge = el('solveBadge');
+
+  // Guarded setters --------------------------------------------------------
+  function ensureStatusElements(){
+    if(!statusEl){
+      const row = document.querySelector('.row2');
+      if(row){
+        statusEl = document.createElement('div');
+        statusEl.className = 'subtle';
+        statusEl.id = 'status';
+        statusEl.textContent = 'Ready';
+        row.appendChild(statusEl);
+      }
+    }
+    if(!defScaleLbl){
+      if(statusEl){
+        const span = document.createElement('span');
+        span.id = 'defScaleLbl';
+        span.textContent = '1×';
+        statusEl.appendChild(document.createTextNode(' • Defl scale: '));
+        statusEl.appendChild(span);
+        defScaleLbl = span;
+      }
+    }
+  }
+  function setStatus(txt){ ensureStatusElements(); if(statusEl){ statusEl.textContent = txt; ensureStatusElements(); } }
+  function safeSetDefScaleLabel(text){ ensureStatusElements(); if(defScaleLbl){ defScaleLbl.textContent = text; } }
 
   let ctxPrev = null, ctx = null;
   try{ ctxPrev = cvPrev.getContext('2d'); ctx = cv.getContext('2d'); }catch(err){ console.error('Canvas context error:', err); }
@@ -196,21 +221,17 @@
   let lastFE = null;
 
   // ---------- Utility helpers --------------------------------------------
-  // Scrub any literal '</label>' or '<\/label>' text nodes that may appear if a host escapes markup (e.g., some GH renderers)
   function scrubEscapedLabelArtifacts(){
     try{
       document.querySelectorAll('.field').forEach(f=>{
         [...f.childNodes].forEach(n=>{
           if(n && n.nodeType===Node.TEXT_NODE){
             const t=(n.textContent||'').trim();
-            // Remove visible artifacts like "</label>", "<\/label>", or "\/label>"
-            if(t.includes('</label>') || t.includes('<\/label>') || t.includes('\/label>')){
-              n.remove();
-            }
+            if(t.includes('</label>') || t.includes('<\/label>') || t.includes('\/label>')){ n.remove(); }
           }
         });
       });
-    }catch(err){ /* no-op: best-effort cleanup */ }
+    }catch(err){ /* no-op */ }
   }
 
   function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
@@ -228,43 +249,33 @@
     const span = r.max - r.min; return values.map(v => (v - r.min)/span);
   }
   function fmt(x){ if(!Number.isFinite(x)) return '—'; const ax=Math.abs(x); if(ax>=1e-2 && ax<1e3) return x.toFixed(4).replace(/0+$/,'').replace(/\.$/,''); return x.toExponential(2).replace('+',''); }
-  function ramp(t){
-    // Blue→Cyan→Green→Yellow→Orange→Red
-    t = clamp(t,0,1); const segs = 5; const s = t*segs; const i = Math.floor(s); const f = s - i;
-    function col(r,g,b){ return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`; }
-    switch(i){
-      case 0: return col(0,   255*f,     255);      // blue->cyan
-      case 1: return col(0,   255,       255*(1-f));// cyan->green
-      case 2: return col(255*f,255,      0);        // green->yellow
-      case 3: return col(255, 255*(1-f), 0);        // yellow->orange
-      default:return col(255, 0,          0);       // red
-    }
-  }
+  function ramp(t){ t = clamp(t,0,1); const segs = 5; const s = t*segs; const i = Math.floor(s); const f = s - i; function col(r,g,b){ return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`; } switch(i){ case 0: return col(0,255*f,255); case 1: return col(0,255,255*(1-f)); case 2: return col(255*f,255,0); case 3: return col(255,255*(1-f),0); default:return col(255,0,0);} }
 
   // Global error hook
-  window.addEventListener('error', (e) => { const msg = e && e.message ? e.message : 'Unknown script error'; if(status) status.textContent = 'Global JS error: ' + msg; setSolveState('error', msg); });
+  window.addEventListener('error', (e) => { const msg = e && e.message ? e.message : 'Unknown script error'; setStatus('Global JS error: ' + msg); setSolveState('error', msg); });
 
-  function updateDefScaleLabel(){ const s = Number(defScaleEl.value)||1; defScaleLbl.textContent = s.toFixed(2).replace(/\.00$/, '') + '×'; }
-  function syncRangePair(rangeEl, numEl, onChange){ const sync = (src, dst) => () => { dst.value = src.value; onChange && onChange(); }; if(rangeEl&&numEl){ rangeEl.addEventListener('input', sync(rangeEl, numEl)); numEl.addEventListener('input', sync(numEl, rangeEl)); } }
+  function updateDefScaleLabel(){ const s = Number(defScaleEl && defScaleEl.value)||1; safeSetDefScaleLabel(s.toFixed(2).replace(/\.00$/, '') + '×'); }
+  function syncRangePair(rangeEl, numEl, onChange){ const sync = (src, dst) => () => { if(dst) dst.value = src.value; onChange && onChange(); }; if(rangeEl&&numEl){ rangeEl.addEventListener('input', sync(rangeEl, numEl)); numEl.addEventListener('input', sync(numEl, rangeEl)); } }
 
   // Units: only convert alpha and refresh preview; no solve
-  unitsEl.addEventListener('change', () => {
-    const u = unitsEl.value; const a = Number(aEl.value); if(!Number.isFinite(a)) return;
-    if(u==='si') aEl.value = (a * 9/5).toFixed(9); else aEl.value = (a * 5/9).toFixed(9);
-    drawPreview();
-  });
+  if(unitsEl){
+    unitsEl.addEventListener('change', () => {
+      const u = unitsEl.value; const a = Number(aEl.value); if(!Number.isFinite(a)) return;
+      if(u==='si') aEl.value = (a * 9/5).toFixed(9); else aEl.value = (a * 5/9).toFixed(9);
+      drawPreview();
+    });
+  }
 
-  el('moldBtn').addEventListener('click', computeAndDraw);
+  const moldBtnEl = el('moldBtn');
+  if(moldBtnEl) moldBtnEl.addEventListener('click', computeAndDraw);
+
   function updateGeomUI(){
     const g=geomEl.value;
     document.querySelectorAll('.g-cyl').forEach(n=> n.style.display=(g==='cyl')?'grid':'none');
     if(coneBox) coneBox.style.display=(g==='cone'||g==='curved')?'block':'none';
     if(curvBox) curvBox.style.display=(g==='curved')?'block':'none';
   }
-  geomEl.addEventListener('change', ()=>{ updateGeomUI();
-  // In case this file is served by a host that escaped label closers in a previous revision,
-  // clean up any visible artifacts so the UI looks correct.
-  scrubEscapedLabelArtifacts(); drawPreview(); });
+  geomEl.addEventListener('change', ()=>{ updateGeomUI(); scrubEscapedLabelArtifacts(); drawPreview(); });
   updateGeomUI();
 
   // Sliders: do NOT solve. defScale only redraws results; k updates preview
@@ -345,7 +356,7 @@
     try{
       const inp = readInputs();
       setSolveState('solving');
-      status.textContent = 'Solving… (clicks/edits won\'t re-solve)';
+      setStatus('Solving… (clicks/edits won\'t re-solve)');
       setTimeout(() => {
         try{
           const approx = analyticShrink(inp); // for status only
@@ -354,18 +365,14 @@
           lastFE = res; // cache
           drawResults(res);
           const rng = valueRange(res.shearValsRZ||[]);
-          status.textContent = `ΔT=${fmt(approx.dT)}°, s_r≈${fmt(approx.s_r)}, s_z≈${fmt(approx.s_z)} • Strain range: ${isFinite(rng.min)?fmt(rng.min):'—'} … ${isFinite(rng.max)?fmt(rng.max):'—'} • Defl scale: ${(+inp.defScale).toFixed(2).replace(/\.00$/, '')}×`;
+          setStatus(`ΔT=${fmt(approx.dT)}°, s_r≈${fmt(approx.s_r)}, s_z≈${fmt(approx.s_z)} • Strain range: ${isFinite(rng.min)?fmt(rng.min):'—'} … ${isFinite(rng.max)?fmt(rng.max):'—'} • Defl scale: ${(+inp.defScale).toFixed(2).replace(/\.00$/, '')}×`);
           setSolveState('done');
-        }catch(err){ console.error(err); status.textContent = 'Error: ' + (err && err.message ? err.message : err); setSolveState('error', err && err.message); }
+        }catch(err){ console.error(err); setStatus('Error: ' + (err && err.message ? err.message : err)); setSolveState('error', err && err.message); }
       }, 0);
-    }catch(e){ console.error(e); status.textContent = 'Error: ' + (e && e.message ? e.message : e); setSolveState('error', e && e.message); }
+    }catch(e){ console.error(e); setStatus('Error: ' + (e && e.message ? e.message : e)); setSolveState('error', e && e.message); }
   }
 
-  function redrawResults(){ if(lastFE){ // keep same FE but update defl scale
-      const sNow = Number(defScaleEl.value)||1;
-      if(lastFE.params) lastFE.params.defScale = sNow;
-      drawResults(lastFE);
-    } }
+  function redrawResults(){ if(lastFE){ const sNow = Number(defScaleEl.value)||1; if(lastFE.params) lastFE.params.defScale = sNow; drawResults(lastFE); } }
 
   function readInputs(){
     const u = unitsEl.value; const G = Number(GEl.value); const alpha = Number(aEl.value);
@@ -657,6 +664,7 @@
   }
 
   // Initial paint (preview only). No solve until MOLD IT.
+  scrubEscapedLabelArtifacts();
   updateDefScaleLabel();
   setSolveState('ready');
   drawPreview();
@@ -664,6 +672,7 @@
 </script>
 </body>
 </html>
+
 
 
 
