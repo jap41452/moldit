@@ -29,7 +29,7 @@
   canvas{background:#fff;border:1px solid var(--border);border-radius:12px; width:auto; height:auto; display:block}
   .hide{display:none}
   .subsec{margin-left:0}
-  .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;margin-top:6px;flex-wrap:wrap;max-width:645px}
+  .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;margin-top:6px;flex-wrap:wrap;max-width:565px}
   .sw{width:14px;height:10px;border-radius:3px;border:1px solid #999}
   .row2{display:grid;grid-template-columns:1fr;grid-auto-rows:auto;row-gap:4px;align-items:start}
   .subtle{color:#666;font-size:12px;justify-self:end;text-align:right;white-space:normal;overflow-wrap:anywhere;word-break:break-word;hyphens:auto;max-width:100%;display:block}
@@ -50,7 +50,7 @@
 </style>
 </head>
 <body>
-  <h2>Rubber Pad - Molded Skrinkage</h2>
+  <h2>Bonded Rubber — Axisymmetric r–z Overlay (Linear Thermal FEM)</h2>
   <div class="row">
     <div class="panel" id="inputs">
       <div class="actionBar">
@@ -132,16 +132,16 @@
       
     </div>
 
-    <div class="panel panel-right" style="flex:0 0 auto;min-width:0;width:calc(645px + 2*var(--pad));max-width:calc(645px + 2*var(--pad))">
+    <div class="panel panel-right" style="flex:0 0 auto;min-width:0;width:calc(565px + 2*var(--pad));max-width:calc(565px + 2*var(--pad))">
       <div class="hdr">Original geometry (live preview, full −r…+r)</div>
-      <div class="canvasWrap" style="margin-bottom:10px;width:645px">
-        <canvas id="cvPrev" width="645" height="240" aria-label="Original geometry preview"></canvas>
+      <div class="canvasWrap" style="margin-bottom:10px;width:565px">
+        <canvas id="cvPrev" width="565" height="240" aria-label="Original geometry preview"></canvas>
       </div>
 
       <div class="hdr">Solved overlay: BEFORE (blue) + AFTER (red) in r–z</div>
-      <div class="canvasWrap" style="width:645px">
+      <div class="canvasWrap" style="width:565px">
         <div id="solveBadge" class="solveBadge" aria-live="polite">Ready</div>
-        <canvas id="cv" width="645" height="380" aria-label="Solved after-shape with shear"></canvas>
+        <canvas id="cv" width="565" height="380" aria-label="Solved after-shape with shear"></canvas>
       </div>
       <div class="legend">
         <span class="sw" style="background:#2d6cdf"></span> Before outline
@@ -185,7 +185,7 @@
   const badge = el('solveBadge');
 
   // Fixed canvas size (attribute width/height). No responsive resizing.
-  function fitCanvases(){ /* no-op: keep 645px */ }
+  function fitCanvases(){ /* no-op: keep 565px */ }
 
   // Guarded setters --------------------------------------------------------
   function ensureStatusElements(){ /* status removed */ }
@@ -653,6 +653,7 @@
 </script>
 </body>
 </html>
+
 
 
 
