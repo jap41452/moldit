@@ -462,7 +462,7 @@
     drawOutlineSymGenericRes(ctx, {H:H0}, '#2d6cdf', X, Y, roBefore, riBefore);
     drawOutlineSymGenericRes(ctx, {H:Hviz}, '#d43f3a', X, Y, roViz, riViz);
 
-    if(res.shearValsRZ){ drawColorbar(ctx, originX + Rmax*scale + 24, originY, 20, Math.max(140, Hmax*scale*0.6), res.shearValsRZ, 'shear γ_rz'); }
+    if(res.shearValsRZ){ drawColorbar(ctx, originX + Rmax*scale + 12, originY, 20, Math.max(140, Hmax*scale*0.6), res.shearValsRZ, 'shear γ_rz'); }
 
     ctx.restore();
 
@@ -493,7 +493,7 @@
         const x0m = X2( -mapRLinear(c.r1, riA, roA, ri, ro) ); const x1m = X2( -mapRLinear(c.r0, riA, roA, ri, ro) );
         ctxDefl.fillRect(x0m, y0, Math.max(0, x1m-x0m), Math.max(0, y1-y0));
       }
-      drawColorbar(ctxDefl, originX2 + Rmax2*scale2 + 24, originY2, 20, Math.max(140, Hviz2*scale2*0.6), res.deflValsRZ, '|u|');
+      drawColorbar(ctxDefl, originX2 + Rmax2*scale2 + 12, originY2, 20, Math.max(140, Hviz2*scale2*0.6), res.deflValsRZ, '|u|');
       ctxDefl.restore();
     }
   }
