@@ -14,8 +14,31 @@
   *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
   body{margin:18px;background:var(--bg);color:var(--ink)}
   h2{margin:0 0 8px}
-  .row{display:flex;gap:var(--gap);align-items:flex-start;flex-wrap:nowrap}
-  @media (max-width: 1100px){ .row{flex-wrap:wrap} }
+
+  /* --- ROW stays horizontal, scrolls if needed --- */
+  .row{
+    display:flex;
+    gap:var(--gap);
+    align-items:flex-start;
+    flex-wrap:nowrap;        /* keep panels side-by-side */
+    overflow-x:auto;         /* allow sideways scroll on small viewports */
+    scroll-behavior:smooth;
+  }
+  /* remove any previous wrap behavior */
+  /* (If you had a media query that set flex-wrap:wrap, this overrides it) */
+
+  /* Fix the left UI panel width; keep content from shrinking */
+  #inputs{
+    flex:0 0 var(--panel-w);
+    min-width:var(--panel-w);
+  }
+
+  /* Right panel can stay auto; its explicit width comes from inline style below */
+  .panel-right{
+    flex:0 0 auto;
+    min-width:0; /* allow inner canvases to define the width */
+  }
+
   .panel{width:var(--panel-w);background:#fff;border:1px solid var(--border);border-radius:12px;padding:var(--pad);overflow:hidden}
   .panel[style*="flex:1"]{width:auto}
   .field{display:grid;grid-template-columns: 1fr 190px;align-items:center;gap:12px;margin:6px 0}
@@ -25,7 +48,7 @@
   .group{border-top:1px dashed #e2e2e2;margin:10px 0;padding-top:10px}
   .btn{background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600}
   .btn:active{transform:translateY(1px)}
-  .note{font-size:12px;color:var(--muted')}
+  .note{font-size:12px;color:var(--muted)}
   canvas{background:#fff;border:1px solid var(--border);border-radius:12px; width:auto; height:auto; display:block}
   .hide{display:none}
   .subsec{margin-left:0}
@@ -141,6 +164,7 @@
       </div>
     </div>
 
+    <!-- Right results panel: width remains explicit so legends/plots fit -->
     <div class="panel panel-right" style="flex:0 0 auto;min-width:0;width:calc(565px + 2*var(--pad));max-width:calc(565px + 2*var(--pad))">
       <div class="hdr">Original geometry (live preview, full −r…+r)</div>
       <div class="canvasWrap" style="margin-bottom:10px;width:565px">
@@ -158,7 +182,6 @@
         <span class="sw" style="background:linear-gradient(90deg,#0000ff,#00ffff,#00ff00,#ffff00,#ff7f00,#ff0000)"></span> Shear γ<sub>rz</sub> (low→high)
       </div>
 
-      <!-- NEW PANEL: resultant deflection magnitude |u| contours -->
       <div class="hdr">Resultant displacement |u| contours (r–z view)</div>
       <div class="canvasWrap" style="width:565px">
         <canvas id="cvDefl" width="565" height="380" aria-label="Deflection contours"></canvas>
@@ -637,7 +660,14 @@
     }
 
     const cells=[]; const shearVals=[]; const deflVals=[]; const dS = 1/nr;
-    const {N:Ni0, dN_dxi, dN_deta} = shape(0,0);
+    const gp0 = 0;
+    function shape0(){ return {
+      N:[0.25*(1-gp0)*(1-gp0),0.25*(1+gp0)*(1-gp0),0.25*(1+gp0)*(1+gp0),0.25*(1-gp0)*(1+gp0)],
+      dN_dxi:[ -0.25*(1-gp0), 0.25*(1-gp0), 0.25*(1+gp0), -0.25*(1+gp0) ],
+      dN_deta:[ -0.25*(1-gp0), -0.25*(1+gp0), 0.25*(1+gp0), 0.25*(1-gp0) ]
+    }; }
+    const {N:Ni0, dN_dxi, dN_deta} = shape0();
+
     for(let j=0;j<nz;j++){
       const z0 = j*dZ, z1 = (j+1)*dZ;
       for(let i=0;i<nr;i++){
@@ -754,6 +784,7 @@
 </script>
 </body>
 </html>
+
 
 
 
