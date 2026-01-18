@@ -159,9 +159,14 @@
       <!-- EXPORT BUTTONS -->
       <div class="testbar">
         <button class="btn" id="btnJson">Export JSON</button>
+        <button class="btn" id="btnImportJson">Import JSON</button>
         <button class="btn" id="btnCsv">Export CSV</button>
+        <input id="jsonFileInput" type="file" accept=".json,application/json" style="display:none;">
         <small class="subtle">Exports original &amp; cooled outlines</small>
       </div>
+
+
+
     </div>
 
     <!-- Right results panel: width remains explicit so legends/plots fit -->
@@ -224,9 +229,16 @@
   const cv = el('cv');
   const cvDefl = el('cvDefl');
   let statusEl = el('status');
+
+
   const badge = el('solveBadge');
   const btnJson = el('btnJson');
+  const btnImportJson = el('btnImportJson');
   const btnCsv  = el('btnCsv');
+  const jsonFileInput = el('jsonFileInput');
+
+
+
 
   function fitCanvases(){ /* fixed size */ }
 
@@ -757,21 +769,134 @@
 
   function exportJSON(){
     try{
+      const now = new Date();
       const { json } = buildExportPayload(lastFE);
-      const ts = new Date().toISOString().replace(/[:.]/g,'-');
-      downloadBlob(`rubber_shrinkage_${ts}.json`, json, 'application/json');
-    }catch(err){ alert(err.message || String(err)); }
-  }
-  function exportCSV(){
-    try{
-      const { csv } = buildExportPayload(lastFE);
-      const ts = new Date().toISOString().replace(/[:.]/g,'-');
-      downloadBlob(`rubber_shrinkage_${ts}.csv`, csv, 'text/csv');
+      
+      // Parse and add timestamp to the JSON object
+      const payload = JSON.parse(json);
+      payload.timestamp = {
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString(),
+        iso: now.toISOString()
+      };
+      
+      const jsonWithTimestamp = JSON.stringify(payload, null, 2);
+      const ts = now.toISOString().replace(/[:.]/g,'-');
+      downloadBlob(`rubber_shrinkage_${ts}.json`, jsonWithTimestamp, 'application/json');
     }catch(err){ alert(err.message || String(err)); }
   }
 
+
+
+  function exportCSV(){
+    try{
+      const now = new Date();
+      const { csv } = buildExportPayload(lastFE);
+      
+      // Add timestamp header to CSV
+      const csvWithTimestamp = `Export Date,${now.toLocaleDateString()}\n` +
+                               `Export Time,${now.toLocaleTimeString()}\n\n` +
+                               csv;
+      
+      const ts = now.toISOString().replace(/[:.]/g,'-');
+      downloadBlob(`rubber_shrinkage_${ts}.csv`, csvWithTimestamp, 'text/csv');
+    }catch(err){ alert(err.message || String(err)); }
+  }
+
+
+
+
   if(btnJson) btnJson.addEventListener('click', exportJSON);
   if(btnCsv)  btnCsv.addEventListener('click', exportCSV);
+
+  function importJSON(){
+    if(!jsonFileInput) return;
+    jsonFileInput.click();
+  }
+
+  if(jsonFileInput){
+    jsonFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try{
+          const data = JSON.parse(evt.target.result);
+          
+          // Validate structure
+          if(!data.inputs){
+            throw new Error('Invalid JSON: missing inputs section');
+          }
+          
+          const inp = data.inputs;
+          
+          // Set units first
+          if(inp.u && unitsEl){
+            unitsEl.value = inp.u;
+          }
+          
+          // Set basic material properties
+          if(inp.G !== undefined && GEl) GEl.value = inp.G;
+          if(inp.alpha !== undefined && aEl) aEl.value = inp.alpha;
+          if(inp.Tm !== undefined && TmEl) TmEl.value = inp.Tm;
+          if(inp.Tr !== undefined && TrEl) TrEl.value = inp.Tr;
+          
+          // Set geometry type
+          if(inp.geom && geomEl){
+            geomEl.value = inp.geom;
+            updateGeomUI();
+          }
+          
+          // Set dimensions based on geometry type
+          if(inp.geom === 'cyl'){
+            if(inp.OD !== undefined && ODEl) ODEl.value = inp.OD;
+            if(inp.ID !== undefined && IDEl) IDEl.value = inp.ID;
+            if(inp.H !== undefined && HEl) HEl.value = inp.H;
+          } else if(inp.geom === 'cone' || inp.geom === 'curved'){
+            if(inp.H !== undefined && HEl) HEl.value = inp.H;
+            if(inp.OD0 !== undefined && OD0El) OD0El.value = inp.OD0;
+            if(inp.OD1 !== undefined && OD1El) OD1El.value = inp.OD1;
+            if(inp.ID0 !== undefined && ID0El) ID0El.value = inp.ID0;
+            if(inp.ID1 !== undefined && ID1El) ID1El.value = inp.ID1;
+          }
+          
+          // Set end condition
+          if(inp.ends && endsEl){
+            endsEl.value = inp.ends;
+          }
+          
+          // Clear last solution
+          lastFE = null;
+          setSolveState('ready');
+          
+          // Update preview
+          drawPreview();
+          
+          // Show success message
+          const timestamp = data.timestamp ? 
+            ` (from ${data.timestamp.date} ${data.timestamp.time})` : '';
+          alert(`Model imported successfully${timestamp}\n\nClick "Shrinkage" to solve.`);
+          
+        }catch(err){
+          console.error(err);
+          alert('Failed to import JSON: ' + (err.message || String(err)));
+        }
+        
+        // Clear the file input so the same file can be re-imported if needed
+        jsonFileInput.value = '';
+      };
+      
+      reader.readAsText(file);
+    });
+  }
+
+  if(btnImportJson) btnImportJson.addEventListener('click', importJSON);
+
+
+
+
+
 
   // ---- boot
   scrubEscapedLabelArtifacts();
@@ -784,6 +909,7 @@
 </script>
 </body>
 </html>
+
 
 
 
